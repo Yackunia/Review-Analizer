@@ -43,7 +43,7 @@ env/
 logs/
 
 # Database
-
+*.db
 *.sqlite
 migrations/
 
