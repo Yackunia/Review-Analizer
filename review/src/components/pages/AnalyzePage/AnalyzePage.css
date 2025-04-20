@@ -1,0 +1,26 @@
+.company-header {
+	display: flex;
+	align-items: center;
+	margin-bottom: 20px;
+  }
+  
+  .company-logo img {
+	width: 80px;
+	height: 80px;
+	object-fit: contain;
+	margin-right: 20px;
+  }
+  
+  .back-button {
+	margin-top: 30px;
+	padding: 10px 20px;
+	background: #0064f1;
+	color: white;
+	border: none;
+	border-radius: 20px;
+	cursor: pointer;
+  }
+  
+  .back-button:hover {
+	background: #0051c7;
+  }

@@ -1,0 +1,9 @@
+
+.companies-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-top: 30px;
+	padding-bottom: 60px;
+}
+

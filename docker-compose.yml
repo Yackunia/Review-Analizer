@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  frontend:
+    build: ./review
+    ports:
+      - "5173:5173"
+    environment:
+      - NODE_ENV=development
+    networks:
+      - frontend-network
+
+  backend:
+    build: ./sentiment_analysis
+    ports:
+      - "5233:5233"
+    volumes:
+      - ./db.db:/app/db.db  # Монтируем файл БД из корня проекта
+      - ./sentiment_analysis:/app  # Монтируем код для разработки
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - DATABASE_PATH=/app/db.db  # Явно указываем путь
+    networks:
+      - frontend-network
+
+networks:
+  frontend-network:
+    driver: bridge
