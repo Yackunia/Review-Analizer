@@ -15,14 +15,16 @@ function App() {
 	const [companyAnalyze, setCompanyAnalyze] = useState(null);
 	const [similarCompanies, setSimilarCompanies] = useState([]);
   
-	const handleCompanySelect = (details = companyDetails) => {
-	  setCompanyDetails(details);
-	  setCurrentPage('company');
-	  setPreviousPage('finder');
+	const handleCompanySelect = (details) => {
+		if (details)
+		  setCompanyDetails(details);
+		setCurrentPage('company');
+		setPreviousPage('finder');
 	};
 
-	const handleAnalyzeSelect = (details = companyAnalyze) => {
-		setCompanyAnalyze(details);
+	const handleAnalyzeSelect = (details) => {
+		if (details)
+		  setCompanyAnalyze(details);
 		setCurrentPage('analyze');
 		setPreviousPage('company');
 	  };
