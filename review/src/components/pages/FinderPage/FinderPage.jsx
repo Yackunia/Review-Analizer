@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { mockCompaniesList, mockCompanyInfo} from '../../../mocks/companies';
 import PageContainer from '../../base/contentContainers/PageContainer';
 import './FinderPage.css';
 import CardContainer from '../../base/contentContainers/CardContainer';
@@ -7,8 +6,7 @@ import CardContainer from '../../base/contentContainers/CardContainer';
 import { getCompanyById } from '../../../back/EndPoints';
 import { searchCompaniesByName } from '../../../back/EndPoints';
 
-export default function FinderPage({ searchQuery, onSearch, onCompanySelect }) {
-  const [companies, setCompanies] = useState([]);
+export default function FinderPage({ companies, setCompanies, searchQuery, onCompanySelect }) {
   const [isLoading, setIsLoading] = useState(false);
 
   const fetchCompanies = async (query) => {

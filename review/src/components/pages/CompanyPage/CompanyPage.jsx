@@ -8,8 +8,6 @@ import { analyzeCompany } from '../../../back/EndPoints';
 import './CompanyPage.css';
 
 export default function CompanyPage({ companyData, onAnalyzeCheck, onInfoCheck, onRatingCheck }) {
-  const [company, setCompany] = useState(companyData);
-
 
   useEffect(() => {
     if (!companyData) {
@@ -51,7 +49,7 @@ export default function CompanyPage({ companyData, onAnalyzeCheck, onInfoCheck, 
 	}
 	};
 
-  if (!company) return <div>Загрузка...</div>;
+  if (!companyData) return <div>Загрузка...</div>;
 
   return (
     <PageContainer>
@@ -60,30 +58,30 @@ export default function CompanyPage({ companyData, onAnalyzeCheck, onInfoCheck, 
 				<div className="company-header">
 					<div className="company-logo">
 						<img 
-							src={company.logoUrl || defIco} 
+							src={companyData.logoUrl || defIco} 
 							alt="Логотип"
 							onError={(e) => e.target.src = defIco}
 						/>
 					</div>
 					<div className="company-title">
-						<h3>{company.tagline}</h3>
-						<h1>{company.name}</h1>
+						<h3>{companyData.tagline}</h3>
+						<h1>{companyData.name}</h1>
 					</div>		
 				</div>
 
-				<p>{company.description}</p>
+				<p>{companyData.description}</p>
 
 				
 			</CardContainer>
 
 			<CardContainer width='800px' minWidth="500px" height={"120px"}>
 				<div className="company-rating">
-					<h2>Рейтинг: {company.rating}/5.0 ★</h2>
+					<h2>Рейтинг: {companyData.rating}/5.0 ★</h2>
 				</div>
 			</CardContainer>
 		</div>
 
-		<AnalyzeCard company={company} onClick={handleAnalyzeClick} />
+		<AnalyzeCard company={companyData} onClick={handleAnalyzeClick} />
 
     </PageContainer>
   );

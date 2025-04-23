@@ -9,19 +9,28 @@ import './App.css';
 
 function App() {
 	const [currentPage, setCurrentPage] = useState('finder');
+	const [previousPage, setPreviousPage] = useState('')
 	const [searchQuery, setSearchQuery] = useState('');
 	const [companyDetails, setCompanyDetails] = useState(null);
 	const [companyAnalyze, setCompanyAnalyze] = useState(null);
+	const [similarCompanies, setSimilarCompanies] = useState([]);
   
-	const handleCompanySelect = (details) => {
+	const handleCompanySelect = (details = companyDetails) => {
 	  setCompanyDetails(details);
 	  setCurrentPage('company');
+	  setPreviousPage('finder');
 	};
 
-	const handleAnalyzeSelect = (details) => {
+	const handleAnalyzeSelect = (details = companyAnalyze) => {
 		setCompanyAnalyze(details);
 		setCurrentPage('analyze');
+		setPreviousPage('company');
 	  };
+
+	const selectPageToPrevious = () => {
+		setCurrentPage(previousPage);
+		setPreviousPage(previousPage == "analyze" ? "company" : previousPage == "company" ? "finder" : "");
+	}
   
 	return (
 	  <>
@@ -29,7 +38,9 @@ function App() {
 		  onSearch={(query) => {
 			setSearchQuery(query);
 			setCurrentPage('finder');
+			setPreviousPage('')
 		  }}
+		  moveToPreviousPage={selectPageToPrevious}
 		/>
 		
 
@@ -38,6 +49,8 @@ function App() {
 			<FinderPage 
 			  searchQuery={searchQuery}
 			  onCompanySelect={handleCompanySelect}
+			  companies={similarCompanies}
+			  setCompanies={setSimilarCompanies}
 			/>
 		  }
 		  {currentPage === 'company' && <CompanyPage 

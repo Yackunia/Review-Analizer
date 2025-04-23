@@ -40,3 +40,27 @@
 	color: #0064f1;
 	font-weight: 500;
   }
+
+
+  .round-icon-button {
+	width: 50px;
+	height: 50px;
+	align-items: center;
+	justify-content: center;
+	background-color: #0064f1;
+	border: none;
+	border-radius: 20px;
+	cursor: pointer;
+	padding: 0;
+	transition: background-color 0.3s ease;
+  }
+  
+  .round-icon-button:hover {
+	background-color: #0051c7;
+  }
+  
+  .round-icon-button img {
+	width: 65%;
+	height: 65%;
+	object-fit: contain;
+  }

@@ -1,21 +1,22 @@
 import { useState, useRef } from 'react';
 import TextButton from '../buttons/mainButtons/TextButton';
 import CircleIconButton from '../buttons/mainButtons/CircleIconButton';
+import RoundIconButton from '../buttons/mainButtons/RoundIconButton';
 import searchIcon from '../../../../public/icons/find.svg';
+import backIcon from '../../../../public/icons/back.svg'
 import './TopBarStyle.css';
 
-export default function TopBar({ onSearch }) {
+export default function TopBar({ onSearch,  moveToPreviousPage}) {
   const [inputValue, setInputValue] = useState('');
   const inputWrapperRef = useRef(null);
 
   const triggerSearchAnimation = () => {
-    const wrapper = inputWrapperRef.current;
-    if (wrapper) {
-      wrapper.classList.add('input-search-trigger');
-      setTimeout(() => wrapper.classList.remove('input-search-trigger'), 500);
-    }
     onSearch(inputValue);
   };
+
+  const goBack = () => {
+	moveToPreviousPage();
+  }
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') triggerSearchAnimation();
@@ -24,12 +25,17 @@ export default function TopBar({ onSearch }) {
   return (
     <div className="top-bar">
       <div className="search-container">
+			<RoundIconButton 
+              iconSrc={backIcon}
+              onClick={goBack}
+            />
         <div 
           className="search-input-wrapper" 
           ref={inputWrapperRef}
-        >
+        >		
           <input
             type="text"
+			style={{marginLeft: "45px"}}
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyPress={handleKeyPress}
