@@ -26,11 +26,15 @@ export default function FinderPage({ companies, setCompanies, searchQuery, onCom
   };
 
   const handleCardClick = async (companyID) => {
+    setIsLoading(true)
     try {
         const companyDetails = await getCompanyById(companyID); 
         onCompanySelect(companyDetails);
     } catch (error) {
         console.error('Fetch company error:', error);
+    }
+    finally{
+      setIsLoading(false);
     }
 };
 
