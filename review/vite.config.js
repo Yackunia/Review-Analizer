@@ -5,6 +5,7 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   server: {
+	allowedHosts: ['clientmood.isgood.host'],
 	port: process.env.FRONTEND_PORT,  // Фронтенд на стандартном порту Vite
 	proxy: {
 	  '/api': {
