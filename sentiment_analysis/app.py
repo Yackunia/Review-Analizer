@@ -46,32 +46,14 @@ def generate_review_logic(name: str) -> Dict[str, Any]:
       name, tagline, description, rating, reviewsCount, reviewsSummary
     """
     prompt = (
-        f'Тебе будет передана строковая переменная name — это название организации или ФИО человека. '
-        f'name = "{name}"\n\n'
-        '1. Найди в открытых источниках (новости, пресса, соцсети, форумы, агрегаторы отзывов, судебные базы) '
-        'максимально полную информацию о name. '
-        '3. Проанализируй тональность найденных отзывов и вычисли средний рейтинг по пятибалльной шкале (float с одной десятичной). '
-        '4. Посчитай общее количество уникальных отзывов и комментариев, использованных в анализе. '
-        '5. Составьте список уникальных ссылок на сайты‑источники всех собранных отзывов.\n'
-        '6. Напиши официальный аналитический обзор отзывов без ссылок и лишней разметки. '
-        '7. Напиши короткую версию обзора отзывов. '
-        '8. Если найдётся более одной организации с названием name, но разной деятельностью, '
-        'то верни **JSON-массив** (array) объектов.'
-        'Убедись, что ни один URL из "sources" и ни один отзыв не повторяются между объектами. '
-        
-        '9. Сформируй итог строго в формате валидного JSON-массива UTF‑8 без комментариев и дополнительного текста, в точном порядке полей:\n\n'
-        '{\n'
-        '    "name": "значение переменной name",\n'
-        '    "tagline": "краткое описание (не более 10 слов)",\n'
-        '    "description": "подробное описание деятельности (20‑30 слов)",\n'
-        '    "rating": 0.0,\n'
-        '    "reviewsCount": 0,\n'
-        '    "sources": [список URL‑источников отзывов (не больше 5)]\n'
-        '    "reviewsSummary": "подробный аналитический обзор"\n'
-        '    "shortSummary": "аналитический обзор в одном предложении"\n'
-        '}\n\n'
-        'Если организация только одна, всё равно верни массив из одного элемента.\n\n'
-        'Выведи только JSON. Отвечай на русском языке.'
+        f'Тебе передана строковая переменная query — это часть названия компании. '
+        f'query = "{name}"\n\n'
+        '1. Найди в открытых источниках (веб-сайты, базы, новостные статьи) до 10 компаний, '
+        'названия которых содержат или близки к query. '
+        '2. Для каждой компании сформируй краткий слоган (tagline) до 5 слов, отражающий суть деятельности. '
+        '3. Отсортируй по релевантности: наиболее точное совпадение первым.'
+        '4. Верни результат в формате JSON-массива от 2 до 10 объектов вида "[{"name":"...","tagline":"..."},...]"'
+        '5. Выведи только JSON-массив без дополнительного текста.'
     )
 
     response = client.responses.create(
@@ -112,7 +94,7 @@ def get_companies_by_name():
     conn = get_db_connection()
     cur = conn.cursor()
     cur.execute(
-        "SELECT id, name, description FROM companies WHERE LOWER(name) LIKE LOWER(?)",
+        "SELECT id, name, tagline FROM companies WHERE LOWER(name) LIKE LOWER(?)",
         (f"%{name}%",)
     )
     rows = cur.fetchall()
@@ -120,7 +102,7 @@ def get_companies_by_name():
 
     if rows:
         return jsonify([
-            {"ID": r["id"], "name": r['name'][0].upper() + r['name'][1:], "description": r["description"]}
+            {"ID": r["id"], "name": r['name'][0].upper() + r['name'][1:], "description": r["tagline"]}
             for r in rows
         ]), 200
 
@@ -164,17 +146,47 @@ def get_companies_by_name():
         {
             "ID": ids[i],
             "name": companies[i]["name"][0].upper() + companies[i]["name"][1:],
-            "tagline": companies[i].get("tagline"),
-            "description": companies[i].get("description"),
-            "shortSummary": companies[i].get("shortSummary"),
-            "rating": companies[i].get("rating"),
-            "reviewsCount": companies[i].get("reviewsCount")
+            "description" : companies[i].get("tagline")
         }
         for i in range(len(companies))
     ]), 201
 
+def generate_company_details(name: str) -> Dict[str, Any]:
+    prompt = (
+        f'Тебе будет передана строковая переменная name — это название организации или ФИО человека. '
+        f'name = "{name}"\n\n'
+        '1. Найди в открытых источниках (новости, пресса, соцсети, форумы, агрегаторы отзывов, судебные базы) '
+        'максимально полную информацию о name. Это должна быть только организация или компания.'
+        '2. Проанализируй тональность найденных отзывов и вычисли средний рейтинг по пятибалльной шкале (float с одной десятичной). '
+        '3. Посчитай общее количество уникальных отзывов и комментариев, использованных в анализе. '
+        '4. Составьте список уникальных ссылок на сайты‑источники всех собранных отзывов.\n'
+        '5. Напиши официальный аналитический обзор отзывов без ссылок и лишней разметки. '
+        '6. Напиши короткую версию обзора отзывов. '
 
-# ── GET /companies/<id> ─────────────────────────────────────────────────────
+        '7. Сформируй итог строго в формате валидного JSON-массива UTF‑8 без комментариев и дополнительного текста, в точном порядке полей:\n\n'
+        '{\n'
+        '    "name": "значение переменной name",\n'
+        '    "tagline": "краткое описание (не более 10 слов)",\n'
+        '    "description": "подробное описание деятельности (20‑30 слов)",\n'
+        '    "rating": 0.0 (если отзывов по компании нет, то верни просто "?"),\n'
+        '    "reviewsCount": 0,\n'
+        '    "sources": [список из ссылок источников отзывов и доменов ссылок для каждого источника (всего не больше 10 элементов)] (возвращай источники в формате: [ссылка_0, домен_0, ссылка_1, домен_1, ...])\n'
+        '    "reviewsSummary": "подробный аналитический обзор"\n'
+        '    "shortSummary": "аналитический обзор в одном предложении"\n'
+        '}\n\n'
+        'Выведи только JSON. Отвечай на русском языке.'
+    )
+
+    response = client.responses.create(
+        model="gpt-4o",
+        tools=[{"type": "web_search_preview"}],
+        input=prompt,
+    )
+    obj = extract_json(response.output_text)
+    if not isinstance(obj, dict):
+        raise ValueError("Ожидался JSON-объект")
+    return obj
+
 @app.route('/companies/<int:company_id>', methods=['GET'])
 @cross_origin()
 def get_company_by_id(company_id):
@@ -182,22 +194,64 @@ def get_company_by_id(company_id):
     cur = conn.cursor()
     cur.execute("SELECT * FROM companies WHERE id = ?", (company_id,))
     row = cur.fetchone()
-    conn.close()
-
     if not row:
+        conn.close()
         return jsonify({"error": "Компания не найдена"}), 404
 
+    # если нет tagline или description — подтягиваем детали
+    if not row["tagline"] or not row["description"]:
+        try:
+            details = generate_company_details(row["name"])
+            cur.execute(
+                """
+                UPDATE companies
+                   SET tagline        = ?,
+                       description    = ?,
+                       rating         = ?,
+                       reviewsCount   = ?,
+                       sources        = ?,
+                       reviewsSummary = ?,
+                       shortSummary   = ?
+                 WHERE id = ?
+                """,
+                (
+                    details["tagline"],
+                    details["description"],
+                    details["rating"],
+                    details["reviewsCount"],
+                    json.dumps(details["sources"]),
+                    details["reviewsSummary"],
+                    details["shortSummary"],
+                    company_id
+                )
+            )
+            conn.commit()
+            # обновить локальную копию row
+            row = {**row,
+                   "tagline": details["tagline"],
+                   "description": details["description"],
+                   "rating": details["rating"],
+                   "reviewsCount": details["reviewsCount"],
+                   "sources": json.dumps(details["sources"]),
+                   "reviewsSummary": details["reviewsSummary"],
+                   "shortSummary": details["shortSummary"]}
+        except Exception as e:
+            conn.close()
+            return jsonify({"error": "Не удалось получить детали", "details": str(e)}), 502
+
+    conn.close()
     return jsonify({
-        "ID": row['id'],
-        "name": row['name'][0].upper() + row['name'][1:],
-        "tagline": row['tagline'],
-        "description": row['description'],
-        "reviewsSummary": row['shortSummary'],
-        "shortSummary": row['shortSummary'],
-        "rating": row['rating'],
-        "logoUrl": row['logoUrl'],
-        "reviewsCount": row['reviewsCount']
-    })
+        "ID":            row["id"],
+        "name":          row["name"],
+        "tagline":       row["tagline"],
+        "description":   row["description"],
+        "rating":        row["rating"],
+        "reviewsCount":  row["reviewsCount"],
+        "sources":       json.loads(row["sources"] or "[]"),
+        "reviewsSummary": row["reviewsSummary"],
+        "shortSummary":   row["shortSummary"],
+    }), 200
+
 
 
 # ── GET /companies/<id>/analyze ──────────────────────────────────────────────

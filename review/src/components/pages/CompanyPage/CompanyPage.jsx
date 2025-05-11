@@ -2,12 +2,12 @@ import { useState, useEffect } from 'react';
 import PageContainer from '../../base/contentContainers/PageContainer';
 import CardContainer from '../../base/contentContainers/CardContainer';
 import defIco from '../../../../public/icons/defLogo.svg';
-import { mockCompaniesList, mockCompanyAnalysis } from '../../../mocks/companies';
 import { analyzeCompany } from '../../../back/EndPoints';
 
 import './CompanyPage.css';
 
 export default function CompanyPage({ companyData, onAnalyzeCheck, onInfoCheck, onRatingCheck }) {
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (!companyData) {
@@ -16,17 +16,21 @@ export default function CompanyPage({ companyData, onAnalyzeCheck, onInfoCheck, 
   }, [companyData]);
 
 
-  const handleAnalyzeClick = async (companyID) => {
-	  try {
-		const analyzeData = await analyzeCompany(companyID);
-		console.log(analyzeData);
-		onAnalyzeCheck(analyzeData);
-	  } catch (error) {
-		console.error('Fetch analyze error:', error);
-	  }
-	  finally{
-		console.log("open analyze")
-	  }
+	const handleAnalyzeClick = async (companyID) => {
+		setIsLoading(true);
+
+		try {
+			const analyzeData = await analyzeCompany(companyID);
+			console.log(analyzeData);
+			onAnalyzeCheck(analyzeData);
+		} 
+		catch (error) {
+			console.error('Fetch analyze error:', error);
+		}
+		finally{
+			setIsLoading(false);
+			console.log("open analyze");
+		}
 	};
 
 	const handleInfoClick = async (companyID) => {
@@ -37,7 +41,7 @@ export default function CompanyPage({ companyData, onAnalyzeCheck, onInfoCheck, 
 		} catch (error) {
 		  console.error('Fetch info error:', error);
 		}
-	  };
+	};
 	
 	const handleRatingClick = async (companyID) => {
 	try {
@@ -49,40 +53,62 @@ export default function CompanyPage({ companyData, onAnalyzeCheck, onInfoCheck, 
 	}
 	};
 
-  if (!companyData) return <div>Загрузка...</div>;
+  if (!companyData || isLoading) return <div>Загрузка...</div>;
 
   return (
+	
     <PageContainer>
-		<div className='cards-line'>
-			<CardContainer>
-				<div className="company-header">
-					<div className="company-logo">
-						<img 
-							src={companyData.logoUrl || defIco} 
-							alt="Логотип"
-							onError={(e) => e.target.src = defIco}
-						/>
-					</div>
-					<div className="company-title">
-						<h3>{companyData.tagline}</h3>
-						<h1>{companyData.name}</h1>
-					</div>		
-				</div>
 
-				<p>{companyData.description}</p>
+		<div></div>
+		{isLoading ? (
+        <div className="loading">Загрузка...</div>
+      ) : (
+		<div>
+			<div className='cards-line'>
+				<div className="card-name">
+					<CardContainer>
+						<div className="company-header">
+							<div className="company-logo">
+								<img 
+									src={companyData.logoUrl || defIco} 
+									alt="Логотип"
+									onError={(e) => e.target.src = defIco}
+								/>
+							</div>
+							<div className="company-title">
+								<h3>{companyData.tagline}</h3>
+								<h1>{companyData.name}</h1>
+							</div>		
+						</div>
+
+						<p>{companyData.description}</p>		
+					</CardContainer>
+				</div>
+			
+			
+				<div className="card-rating">
+					<CardContainer>
+						<div className="company-rating">
+							<h2>Рейтинг: {companyData.rating}/5.0 ★</h2>
+						</div>
+					</CardContainer>
+
+					<div style={{marginTop:"30px"}}></div>
+
+					<CardContainer>
+						<div className="company-rating">
+							<h2>Отзывов: {companyData.reviewsCount}📊</h2>
+						</div>
+					</CardContainer>
+				</div>
 
 				
-			</CardContainer>
+			</div>
 
-			<CardContainer width='800px' minWidth="500px" height={"120px"}>
-				<div className="company-rating">
-					<h2>Рейтинг: {companyData.rating}/5.0 ★</h2>
-				</div>
-			</CardContainer>
+			<AnalyzeCard company={companyData} onClick={handleAnalyzeClick} />
 		</div>
-
-		<AnalyzeCard company={companyData} onClick={handleAnalyzeClick} />
-
+	  )
+	}
     </PageContainer>
   );
 }

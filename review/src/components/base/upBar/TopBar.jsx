@@ -24,18 +24,15 @@ export default function TopBar({ onSearch,  moveToPreviousPage}) {
 
   return (
     <div className="top-bar">
+          <RoundIconButton 
+            iconSrc={backIcon}
+            onClick={goBack}
+          />
       <div className="search-container">
-			<RoundIconButton 
-              iconSrc={backIcon}
-              onClick={goBack}
-            />
-        <div 
-          className="search-input-wrapper" 
-          ref={inputWrapperRef}
-        >		
+       
+        <div className="search-input-wrapper" ref={inputWrapperRef}>
           <input
             type="text"
-			style={{marginLeft: "45px"}}
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyPress={handleKeyPress}

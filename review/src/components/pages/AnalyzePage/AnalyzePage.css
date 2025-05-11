@@ -24,3 +24,22 @@
   .back-button:hover {
 	background: #0051c7;
   }
+
+  .sources-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.source-link {
+  color: #0066cc;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 5px 0;
+  transition: color 0.2s;
+}
+
+.source-link:hover {
+  color: #004499;
+  text-decoration: underline;
+}

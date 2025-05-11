@@ -49,15 +49,36 @@ export default function AnalyzePage({ company, analyzeData }) {
 		</div>
 
 		<div style={{"marginTop" : "25px", "marginBottom" : "25px"}}>
-			<CardContainer>
-				<h1>Источники</h1>
-				<p className="analyze-text">{analyzeData[1]}</p>
-			</CardContainer>
-		</div>
+    <div style={{ marginTop: "25px", marginBottom: "25px" }}>
+  <CardContainer>
+    <h1>Источники</h1>
+    {(() => {
+      const items = analyzeData[1].split("\n");
+      const result = [];
+
+      for (let i = 0; i < items.length; i += 2) {
+        const link = items[i];
+        const title = items[i + 1];
+
+        if (link && title) {
+          result.push(
+            <p key={i}>
+              <a href={link} target="_blank" rel="noopener noreferrer" style={{ color: '#007bff', textDecoration: 'underline' }}>
+                {title}
+              </a>
+            </p>
+          );
+        }
+      }
+
+      return result;
+    })()}
+  </CardContainer>
+</div>
+
+  </div>
 
 	</div>
-
-      
 
     </PageContainer>
   );

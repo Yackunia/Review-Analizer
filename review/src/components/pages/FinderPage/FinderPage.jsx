@@ -14,8 +14,7 @@ export default function FinderPage({ companies, setCompanies, searchQuery, onCom
     try {
 	  // console.log("start ")
 	  const companiesData = await searchCompaniesByName(query);
-
-    console.log(companies);
+    console.log(companiesData)
 	  setCompanies(companiesData);
     } catch (error) {
       console.error('Search error:', error);
@@ -27,11 +26,15 @@ export default function FinderPage({ companies, setCompanies, searchQuery, onCom
   };
 
   const handleCardClick = async (companyID) => {
+    setIsLoading(true)
     try {
         const companyDetails = await getCompanyById(companyID); 
         onCompanySelect(companyDetails);
     } catch (error) {
         console.error('Fetch company error:', error);
+    }
+    finally{
+      setIsLoading(false);
     }
 };
 
@@ -67,6 +70,7 @@ export default function FinderPage({ companies, setCompanies, searchQuery, onCom
 
 function CompanyCard({ company, onClick }) {
   const handleClick = (e) => {
+    console.log(company)
     const card = e.currentTarget;
     card.classList.add('click-animation');
     
