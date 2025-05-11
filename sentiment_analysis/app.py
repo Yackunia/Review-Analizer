@@ -170,7 +170,7 @@ def generate_company_details(name: str) -> Dict[str, Any]:
         '    "description": "подробное описание деятельности (20‑30 слов)",\n'
         '    "rating": 0.0 (если отзывов по компании нет, то верни просто "?"),\n'
         '    "reviewsCount": 0,\n'
-        '    "sources": [список URL‑источников отзывов (не больше 5)] (возвращай источники в формате одномерного массива из элементов: [ссылка_0, название_сайта_0, ссылка_1, название_сайта_1, ...]\n'
+        '    "sources": [список из ссылок источников отзывов и доменов ссылок для каждого источника (всего не больше 10 элементов)] (возвращай источники в формате: [ссылка_0, домен_0, ссылка_1, домен_1, ...])\n'
         '    "reviewsSummary": "подробный аналитический обзор"\n'
         '    "shortSummary": "аналитический обзор в одном предложении"\n'
         '}\n\n'
@@ -201,13 +201,7 @@ def get_company_by_id(company_id):
     # если нет tagline или description — подтягиваем детали
     if not row["tagline"] or not row["description"]:
         try:
-            
             details = generate_company_details(row["name"])
-            raw_sources = details.get("sources", [])
-            flat_sources = [
-                src[0] if isinstance(src, (list, tuple)) and len(src) > 0 else src
-                for src in raw_sources
-            ]
             cur.execute(
                 """
                 UPDATE companies
@@ -225,7 +219,7 @@ def get_company_by_id(company_id):
                     details["description"],
                     details["rating"],
                     details["reviewsCount"],
-                    json.dumps(flat_sources),
+                    json.dumps(details["sources"]),
                     details["reviewsSummary"],
                     details["shortSummary"],
                     company_id
