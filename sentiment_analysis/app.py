@@ -137,7 +137,7 @@ def get_companies_by_name():
     # Сохраняем все компании
     conn = get_db_connection()
     cur = conn.cursor()
-    ids: List[int] = []
+    ids = []
     for comp in companies:
         cur.execute(
             """
