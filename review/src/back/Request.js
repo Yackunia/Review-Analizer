@@ -13,6 +13,8 @@ export default async function Request(endpoint, method = 'GET', data = null) {
 
     try {
         const response = await fetch(endpoint, config);
+
+        console.log(response);
         
         const contentType = response.headers.get('content-type');
         if (!contentType || !contentType.includes('application/json')) {

@@ -65,15 +65,12 @@ def generate_review_logic(name: str) -> Dict[str, Any]:
         'Выведи только JSON. Отвечай на русском языке.'
     )
 
-    completion = client.chat.completions.create(
-        model="o4-mini",
-        messages=[
-            {"role": "system", "content": "Ты — ассистент по бэкграунд‑чеку."},
-            {"role": "user", "content": prompt},
-        ],
-	tools=[ { type: "web_search_preview" } ],
+    response = client.responses.create(
+        model="gpt-4o",           # ✅ модель, поддерживающая инструменты
+        tools=[{"type": "web_search_preview"}],
+        input=prompt,                   # вместо messages — простой input
     )
-    content = completion.choices[0].message.content.strip()
+    content = response.choices[0].message.content.strip()
     return extract_json(content)
 
 

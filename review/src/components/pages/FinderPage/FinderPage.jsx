@@ -13,8 +13,10 @@ export default function FinderPage({ companies, setCompanies, searchQuery, onCom
     setIsLoading(true);
     try {
 	  // console.log("start ")
-	  const companiesData = await searchCompaniesByName(query)
-	  setCompanies(companiesData)
+	  const companiesData = await searchCompaniesByName(query);
+
+    console.log(companies);
+	  setCompanies(companiesData);
     } catch (error) {
       console.error('Search error:', error);
     } finally {
