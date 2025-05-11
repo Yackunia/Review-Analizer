@@ -18,17 +18,22 @@ if not api_key:
 client = OpenAI(api_key=api_key)
 
 
-def extract_json(text: str) -> Dict[str, Any]:
-    """Извлекает первый валидный JSON‑объект из произвольного текста."""
+def extract_json(text: str):
+    """Извлекает первый валидный JSON-объект или массив из произвольного текста."""
+    text = text.strip()
+    decoder = json.JSONDecoder()
     try:
-        return json.loads(text)
+        # пробуем сразу парсить весь текст
+        return decoder.decode(text)
     except json.JSONDecodeError:
-        decoder = json.JSONDecoder()
         idx = 0
         while idx < len(text):
             try:
-                obj, _ = decoder.raw_decode(text[idx:])
-                return obj
+                obj, end = decoder.raw_decode(text[idx:])
+                # убедимся, что это объект или список
+                if isinstance(obj, (dict, list)):
+                    return obj
+                idx += end
             except json.JSONDecodeError:
                 idx += 1
         raise ValueError("В ответе модели не найден валидный JSON")
@@ -51,7 +56,11 @@ def generate_review_logic(name: str) -> Dict[str, Any]:
         '5. Составьте список уникальных ссылок на сайты‑источники всех собранных отзывов.\n'
         '6. Напиши официальный аналитический обзор отзывов без ссылок и лишней разметки. '
         '7. Напиши короткую версию обзора отзывов. '
-        '8. Сформируй итог строго в формате валидного JSON UTF‑8 без комментариев и дополнительного текста, в точном порядке полей:\n\n'
+        '8. Если найдётся более одной организации с названием name, но разной деятельностью, '
+        'то верни **JSON-массив** (array) объектов.'
+        'Убедись, что ни один URL из "sources" и ни один отзыв не повторяются между объектами. '
+        
+        '9. Сформируй итог строго в формате валидного JSON-массива UTF‑8 без комментариев и дополнительного текста, в точном порядке полей:\n\n'
         '{\n'
         '    "name": "значение переменной name",\n'
         '    "tagline": "краткое описание (не более 10 слов)",\n'
@@ -62,16 +71,22 @@ def generate_review_logic(name: str) -> Dict[str, Any]:
         '    "reviewsSummary": "подробный аналитический обзор"\n'
         '    "shortSummary": "аналитический обзор в одном предложении"\n'
         '}\n\n'
+        'Если организация только одна, всё равно верни массив из одного элемента.\n\n'
         'Выведи только JSON. Отвечай на русском языке.'
     )
 
     response = client.responses.create(
-        model="gpt-4o",           # ✅ модель, поддерживающая инструменты
+        model="gpt-4o",
         tools=[{"type": "web_search_preview"}],
-        input=prompt,                   # вместо messages — простой input
+        input=prompt,
     )
-    content = response.choices[0].message.content.strip()
-    return extract_json(content)
+    # у Responses API нет .choices – берем сразу output_text
+    content = response.output_text
+    result = extract_json(content)
+    if isinstance(result, dict):
+        # если вдруг модель вернула один объект, обернём в список
+        return [result]
+    return result  # уже список
 
 
 # ── Flask app setup ─────────────────────────────────────────────────────────
@@ -91,7 +106,7 @@ def get_companies_by_name():
     name = request.args.get('name', '').strip()
     if not name:
         return jsonify([]), 200
-    
+
     app.logger.debug(f"Searching for company: {name}")
     app.logger.debug(f"Database path: {os.getenv('DATABASE_PATH')}")
 
@@ -110,19 +125,20 @@ def get_companies_by_name():
             for r in rows
         ]), 200
 
-    # Не нашли — генерируем через OpenAI
+    # Не нашли в БД — генерируем через OpenAI
     try:
-        company_data = generate_review_logic(name)
+        companies = generate_review_logic(name)
     except Exception as exc:
         return jsonify({
             "error": "Генерация не удалась",
             "details": str(exc)
         }), 502
 
-    # Сохраняем в БД
+    # Сохраняем все компании
     conn = get_db_connection()
     cur = conn.cursor()
-    try:
+    ids: List[int] = []
+    for comp in companies:
         cur.execute(
             """
             INSERT INTO companies
@@ -130,36 +146,33 @@ def get_companies_by_name():
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
-                company_data["name"],
-                company_data.get("tagline"),
-                company_data.get("description"),
-                company_data.get("reviewsSummary"),
-                company_data.get("shortSummary"),
-                company_data.get("rating"),
-                company_data.get("reviewsCount"),
-                json.dumps(company_data.get("sources", [])),
+                comp.get("name"),
+                comp.get("tagline"),
+                comp.get("description"),
+                comp.get("reviewsSummary"),
+                comp.get("shortSummary"),
+                comp.get("rating"),
+                comp.get("reviewsCount"),
+                json.dumps(comp.get("sources", [])),
             )
         )
-        new_id = cur.lastrowid
-        conn.commit()
-    except Exception as e:
-        conn.rollback()
-        conn.close()
-        return jsonify({
-            "error": "Ошибка сохранения в БД",
-            "details": str(e)
-        }), 500
+        ids.append(cur.lastrowid)
+    conn.commit()
     conn.close()
 
-    return jsonify([{
-        "ID": new_id,
-        "name": company_data['name'][0].upper() + company_data['name'][1:],
-        "tagline": company_data.get("tagline"),
-        "description": company_data.get("description"),
-        "shortSummary": company_data.get("shortSummary"),
-        "rating": company_data.get("rating"),
-        "reviewsCount": company_data.get("reviewsCount")
-    }]), 201
+    # Возвращаем список новых компаний
+    return jsonify([
+        {
+            "ID": ids[i],
+            "name": companies[i]["name"][0].upper() + companies[i]["name"][1:],
+            "tagline": companies[i].get("tagline"),
+            "description": companies[i].get("description"),
+            "shortSummary": companies[i].get("shortSummary"),
+            "rating": companies[i].get("rating"),
+            "reviewsCount": companies[i].get("reviewsCount")
+        }
+        for i in range(len(companies))
+    ]), 201
 
 
 # ── GET /companies/<id> ─────────────────────────────────────────────────────
