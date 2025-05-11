@@ -4,9 +4,11 @@ services:
   frontend:
     build: ./review
     ports:
-      - "80:5173"
+      - "${FRONTEND_PORT}:${FRONTEND_PORT}"
     environment:
       - NODE_ENV=development
+    env_file:
+      - ./.env
     networks:
       - frontend-network
 
