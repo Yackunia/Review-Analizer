@@ -30,7 +30,6 @@
 
 .company-header {
 	display: flex;
-	width: 1000px;
 	margin-bottom: 30px;
 	cursor: pointer;
   }
