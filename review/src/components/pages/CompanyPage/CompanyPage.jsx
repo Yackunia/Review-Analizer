@@ -54,31 +54,35 @@ export default function CompanyPage({ companyData, onAnalyzeCheck, onInfoCheck, 
   return (
     <PageContainer>
 		<div className='cards-line'>
-			<CardContainer>
-				<div className="company-header">
-					<div className="company-logo">
-						<img 
-							src={companyData.logoUrl || defIco} 
-							alt="Логотип"
-							onError={(e) => e.target.src = defIco}
-						/>
+			<div className="card-name">
+				<CardContainer>
+					<div className="company-header">
+						<div className="company-logo">
+							<img 
+								src={companyData.logoUrl || defIco} 
+								alt="Логотип"
+								onError={(e) => e.target.src = defIco}
+							/>
+						</div>
+						<div className="company-title">
+							<h3>{companyData.tagline}</h3>
+							<h1>{companyData.name}</h1>
+						</div>		
 					</div>
-					<div className="company-title">
-						<h3>{companyData.tagline}</h3>
-						<h1>{companyData.name}</h1>
-					</div>		
-				</div>
 
-				<p>{companyData.description}</p>
+					<p>{companyData.description}</p>		
+				</CardContainer>
+			</div>
+		
+			<div className="card-rating">
+				<CardContainer width='800px' minWidth="500px" height={"120px"}>
+					<div className="company-rating">
+						<h2>Рейтинг: {companyData.rating}/5.0 ★</h2>
+					</div>
+				</CardContainer>
+			</div>
 
-				
-			</CardContainer>
-
-			<CardContainer width='800px' minWidth="500px" height={"120px"}>
-				<div className="company-rating">
-					<h2>Рейтинг: {companyData.rating}/5.0 ★</h2>
-				</div>
-			</CardContainer>
+			
 		</div>
 
 		<AnalyzeCard company={companyData} onClick={handleAnalyzeClick} />

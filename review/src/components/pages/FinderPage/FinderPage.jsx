@@ -14,8 +14,7 @@ export default function FinderPage({ companies, setCompanies, searchQuery, onCom
     try {
 	  // console.log("start ")
 	  const companiesData = await searchCompaniesByName(query);
-
-    console.log(companies);
+    console.log(companiesData)
 	  setCompanies(companiesData);
     } catch (error) {
       console.error('Search error:', error);
@@ -67,6 +66,7 @@ export default function FinderPage({ companies, setCompanies, searchQuery, onCom
 
 function CompanyCard({ company, onClick }) {
   const handleClick = (e) => {
+    console.log(company)
     const card = e.currentTarget;
     card.classList.add('click-animation');
     
