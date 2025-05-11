@@ -5,10 +5,11 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   server: {
+	allowedHosts: ['clientmood.isgood.host'],
 	port: 5173,  // Фронтенд на стандартном порту Vite
 	proxy: {
 	  '/api': {
-		target: 'http://localhost:5233',  // Совпадает с ApiAddress
+		target: 'http://clientmood.isgood.host:5233',  // Совпадает с ApiAddress
 		changeOrigin: true,
 		rewrite: (path) => path.replace(/^\/api/, '')  // Убираем /api при проксировании
 	  }

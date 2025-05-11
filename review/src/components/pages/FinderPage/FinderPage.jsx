@@ -12,14 +12,14 @@ export default function FinderPage({ companies, setCompanies, searchQuery, onCom
   const fetchCompanies = async (query) => {
     setIsLoading(true);
     try {
-	  console.log("start ")
+	  // console.log("start ")
 	  const companiesData = await searchCompaniesByName(query)
 	  setCompanies(companiesData)
     } catch (error) {
       console.error('Search error:', error);
     } finally {
-	  console.log("stop")
-	  console.log(companies)
+	  // console.log("stop")
+	  // console.log(companies)
       setIsLoading(false);
     }
   };

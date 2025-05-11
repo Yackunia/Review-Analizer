@@ -9,6 +9,7 @@ COPY package*.json ./
 
 # Устанавливаем зависимости (включая dev-зависимости)
 RUN npm install
+RUN npm install -g vite
 
 # Копируем все файлы проекта
 COPY . .

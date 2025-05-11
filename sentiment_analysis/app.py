@@ -71,6 +71,7 @@ def generate_review_logic(name: str) -> Dict[str, Any]:
             {"role": "system", "content": "Ты — ассистент по бэкграунд‑чеку."},
             {"role": "user", "content": prompt},
         ],
+	tools=[ { type: "web_search_preview" } ],
     )
     content = completion.choices[0].message.content.strip()
     return extract_json(content)
