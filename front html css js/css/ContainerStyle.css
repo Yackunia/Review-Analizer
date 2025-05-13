@@ -1,0 +1,15 @@
+.page_container {
+  padding: 20px;
+  margin-top: 82px; /* чтобы не перекрывать TopBar */
+}
+.container-card {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  padding: 16px;
+  cursor: pointer;
+  transition: box-shadow .2s;
+}
+.container-card:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}

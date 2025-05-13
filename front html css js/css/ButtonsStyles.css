@@ -1,0 +1,62 @@
+.circle-icon-button {
+  width: 45px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #0064f1;
+  border: none;
+  border-radius: 0 20px 20px 0;
+  cursor: pointer;
+  padding: 0;
+  transition: background-color 0.3s ease;
+}
+.circle-icon-button:hover {
+  background-color: #0051c7;
+}
+.circle-icon-button img {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+}
+
+.text-button {
+  background: none;
+  border: none;
+  color: #333;
+  cursor: pointer;
+  padding: 8px 16px;
+  transition: color 0.2s ease;
+  font-family: "Ubuntu", sans-serif;
+}
+.text-button:hover {
+  color: #888;
+}
+.text-button.active {
+  color: #0064f1;
+  font-weight: 500;
+}
+
+.round-icon-button {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #0064f1;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  transition: background-color 0.3s ease;
+}
+.round-icon-button:hover {
+  background-color: #0051c7;
+}
+.round-icon-button img {
+  width: 65%;
+  height: 65%;
+  object-fit: contain;
+}
