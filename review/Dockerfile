@@ -1,21 +1,16 @@
-# Используем официальный образ Node.js
-FROM node:18-alpine
+# Используем легковесный nginx-образ
+FROM nginx:alpine
 
 # Устанавливаем рабочую директорию
-WORKDIR /app
+WORKDIR /usr/share/nginx/html
 
-# Копируем package.json и package-lock.json
-COPY package*.json ./
-
-# Устанавливаем зависимости (включая dev-зависимости)
-RUN npm install
-RUN npm install -g vite
-
-# Копируем все файлы проекта
+# Копируем статические файлы
 COPY . .
 
-# Открываем порт, на котором работает Vite (5173)
-EXPOSE 5173
+# Настраиваем nginx
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Запускаем dev-сервер с HMR
-CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
+# Открываем порт 80 (стандартный для nginx)
+EXPOSE 80
+
+# Nginx автоматически запускается при старте контейнера

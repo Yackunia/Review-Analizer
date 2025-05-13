@@ -4,11 +4,7 @@ services:
   frontend:
     build: ./review
     ports:
-      - "${FRONTEND_PORT}:${FRONTEND_PORT}"
-    environment:
-      - NODE_ENV=development
-    env_file:
-      - ./.env
+      - "80:80"  # Теперь используем стандартный HTTP-порт
     networks:
       - frontend-network
 
@@ -17,11 +13,11 @@ services:
     ports:
       - "5233:5233"
     volumes:
-      - ./db.db:/app/db.db  # Монтируем файл БД из корня проекта
-      - ./sentiment_analysis:/app  # Монтируем код для разработки
+      - ./db.db:/app/db.db
+      - ./sentiment_analysis:/app
     environment:
       - OPENAI_API_KEY=${OPENAI_API_KEY}
-      - DATABASE_PATH=/app/db.db  # Явно указываем путь
+      - DATABASE_PATH=/app/db.db
     networks:
       - frontend-network
 
