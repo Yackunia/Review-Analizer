@@ -1,5 +1,5 @@
-import Request from "./Request";
-import ApiAddress from "./Variables";
+import Request from "./Request.js";
+import ApiAddress from "./Variables.js";
 
 
 export async function searchCompaniesByName(name) {

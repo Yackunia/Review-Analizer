@@ -1,14 +1,23 @@
-import { state, setSearchQuery, goToPage, goBack } from '../state.js';
-import { searchCompaniesByName, getCompanyById } from '../Endpoints.js';
-import { renderContent } from '../state.js';
+import { searchCompaniesByName, getCompanyById } from '../back/EndPoints.js';
+import { renderContent } from './state.js';
+import mockCompany from '../back/Mocks.js';
+import { state } from './state.js';
 
 async function fetchCompanies() {
   state.isLoading = true;
   state.lastSearchQuery = state.searchQuery;
   renderContent();
+
   try {
     state.similarCompanies = await searchCompaniesByName(state.searchQuery);
-  } catch {}
+  } catch (error) {
+    if (state.isUsingMockData) {
+      state.similarCompanies = [mockCompany];
+    } else {
+      state.similarCompanies = [];
+    }
+  }
+
   state.isLoading = false;
   renderContent();
 }

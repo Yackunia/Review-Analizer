@@ -6,6 +6,7 @@ export const state = {
   similarCompanies: [],
   companyDetails: null,
   companyAnalyze: null,
+  isUsingMockData: true,
   isLoading: false
 };
 
@@ -27,9 +28,9 @@ export function setSearchQuery(q) {
   goToPage('finder');
 }
 
-import { renderFinderPage } from './pages/finder.js';
-import { renderCompanyPage } from './pages/company.js';
-import { renderAnalyzePage } from './pages/analyze.js';
+import { renderFinderPage } from './finder.js';
+import { renderCompanyPage } from './company.js';
+import { renderAnalyzePage } from './analyze.js';
 
 export function renderContent() {
   const out = document.getElementById('content');
