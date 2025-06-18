@@ -1,5 +1,5 @@
 export const state = {
-  currentPage: 'finder',
+  currentPage: 'analyze',
   previousPage: '',
   searchQuery: '',
   lastSearchQuery: '',
