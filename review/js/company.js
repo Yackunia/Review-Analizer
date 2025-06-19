@@ -98,83 +98,40 @@ export function renderCompanyPage(container) {
   cardsLine.append(cardRating);
   page.append(cardsLine);
 
-  // --- Кнопки Инфо и Рейтинг ---
-  const actionsDiv = document.createElement('div');
-  actionsDiv.className = 'company-actions';
 
-  const infoBtn = document.createElement('button');
-  infoBtn.className = 'back-button';
-  infoBtn.textContent = 'Информация';
-  const infoResult = document.createElement('div');
-  infoResult.className = 'action-result';
-
-  infoBtn.addEventListener('click', async () => {
-    infoBtn.disabled = true;
-    try {
-      let infoData;
-      if (state.isUsingMockData) {
-        infoData = mockCompany;
-      } else {
-        const res = await fetch(`/api/company/info?id=${company.ID}`);
-        infoData = await res.json();
-      }
-      infoResult.textContent = JSON.stringify(infoData, null, 2);
-    } catch (err) {
-      infoResult.textContent = 'Ошибка загрузки информации';
-      console.error(err);
-    } finally {
-      infoBtn.disabled = false;
-    }
-  });
-
-  const ratingBtn = document.createElement('button');
-  ratingBtn.className = 'back-button';
-  ratingBtn.textContent = 'Рейтинг';
-  const ratingResult = document.createElement('div');
-  ratingResult.className = 'action-result';
-
-  ratingBtn.addEventListener('click', async () => {
-    ratingBtn.disabled = true;
-    try {
-      let rateData;
-      if (state.isUsingMockData) {
-        rateData = mockCompany;
-      } else {
-        const res = await fetch(`/api/company/rating?id=${company.ID}`);
-        rateData = await res.json();
-      }
-      ratingResult.textContent = JSON.stringify(rateData, null, 2);
-    } catch (err) {
-      ratingResult.textContent = 'Ошибка загрузки рейтинга';
-      console.error(err);
-    } finally {
-      ratingBtn.disabled = false;
-    }
-  });
-
-  actionsDiv.append(infoBtn, ratingBtn);
-  page.append(actionsDiv, infoResult, ratingResult);
 
   // --- Анализ отзывов ---
   const cardsEnd = document.createElement('div');
   cardsEnd.className = 'cards-end';
   const analyzeCard = document.createElement('div');
   analyzeCard.className = 'container-card reviews-analysis';
+
+
   analyzeCard.addEventListener('click', () => {
     analyzeCard.classList.add('click-animation');
     setTimeout(async () => {
       analyzeCard.classList.remove('click-animation');
-      state.isLoading = true; renderContent();
-      try {
-        const data = await analyzeCompany(company.ID);
-        state.companyDetails = data;
-        goToPage('analyze');
-      } catch (err) {
-        console.error('Fetch analyze error:', err);
-      } finally {
-        state.isLoading = false; renderContent();
+      state.isLoading = true; 
+      renderContent();
+      
+      if (state.isUsingMockData){
+        state.companyDetails = mockCompany;
       }
-    }, 500);
+      else{
+        try {
+          const data = await analyzeCompany(company.ID);
+          state.companyDetails = data;
+        } 
+        catch (err) {
+          console.error('Fetch analyze error:', err);
+        }
+      }
+      
+      state.isLoading = false; 
+      renderContent();          
+      goToPage('analyze');
+
+      }, 500);
   });
 
   const h1anal = document.createElement('h1'); h1anal.textContent = 'Анализ отзывов';

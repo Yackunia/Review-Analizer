@@ -5,7 +5,7 @@ export const state = {
   lastSearchQuery: '',
   similarCompanies: [],
   companyDetails: null,
-  isUsingMockData: true,
+  isUsingMockData: false,
   isLoading: false
 };
 
