@@ -1,3 +1,6 @@
+import { getBackendUrl } from "./ConfigReader.js";
+
+
 export const state = {
   currentPage: 'find',
   previousPage: '',
@@ -16,6 +19,8 @@ export function goToPage(page) {
 }
 
 export function goBack() {
+  console.log(`${getBackendUrl}/companies?name=`)
+  console.log("penis")
   const prev = state.previousPage || 'finder';
   state.currentPage = prev;
   state.previousPage = prev === 'analyze' ? 'company' : prev === 'company' ? 'finder' : '';

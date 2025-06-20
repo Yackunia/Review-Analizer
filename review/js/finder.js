@@ -27,6 +27,8 @@ export function renderFinderPage(container) {
   const page = document.createElement('div');
   page.className = 'page_container';
 
+  const lol = document.createElement('p')
+  lol.textContent = "penis"
   if (state.isLoading) {
     const loader = document.createElement('div');
     loader.className = 'loading';

@@ -3,6 +3,7 @@ import { getBackendUrl } from "./ConfigReader.js";
 
 
 export async function searchCompaniesByName(name) {
+    console.log(`${getBackendUrl}/companies?name=${name}`)
     const url = `${getBackendUrl}/companies?name=${name}`;
     return await Request(url, 'GET');
 }

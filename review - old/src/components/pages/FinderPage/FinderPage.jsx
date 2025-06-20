@@ -44,7 +44,7 @@ export default function FinderPage({ companies, setCompanies, searchQuery, onCom
 
   return (
     <PageContainer>
-      <div></div> 
+      <div>яяяяяяяя хуй</div> 
       {isLoading ? (
         <div className="loading">Загрузка...</div>
       ) : companies.length > 0 ? (
