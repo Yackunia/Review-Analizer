@@ -10,7 +10,6 @@ export function initTopBar() {
 
   // При клике на «лупу»
   btnSearch.addEventListener('click', () => {
-    console.log("penis")
     wrapper.classList.add('input-search-trigger');
     setTimeout(() => wrapper.classList.remove('input-search-trigger'), 500);
     setSearchQuery(input.value.trim());

@@ -12,6 +12,7 @@ async function fetchCompanies() {
     if (state.isUsingMockData) {
       state.similarCompanies = [mockCompany];
     } else {
+      console.log("start");
       state.similarCompanies = await searchCompaniesByName(state.searchQuery);
     }
   } catch (error) {
@@ -27,8 +28,6 @@ export function renderFinderPage(container) {
   const page = document.createElement('div');
   page.className = 'page_container';
 
-  const lol = document.createElement('p')
-  lol.textContent = "penis"
   if (state.isLoading) {
     const loader = document.createElement('div');
     loader.className = 'loading';
@@ -85,7 +84,7 @@ export function renderFinderPage(container) {
     const empty = document.createElement('div');
     empty.className = 'empty-state';
     empty.textContent = state.searchQuery
-      ? 'Ничего не найдено'
+      ? 'ZZZZ'
       : 'Введите запрос для поиска компаний';
     page.append(empty);
   }
