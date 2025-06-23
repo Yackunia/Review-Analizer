@@ -24,7 +24,6 @@ export function initTopBar() {
   });
 
   btnHelp.addEventListener('click', () => {
-    console.log('Открыть справку');
     alert('Здесь будет справка по приложению');
   });
 }

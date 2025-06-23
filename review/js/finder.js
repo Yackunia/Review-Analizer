@@ -11,7 +11,6 @@ async function fetchCompanies() {
     if (state.isUsingMockData) {
       state.similarCompanies = [mockCompany];
     } else {
-      console.log("start");
       state.similarCompanies = await searchCompaniesByName(state.searchQuery);
     }
   } catch (error) {
@@ -83,7 +82,7 @@ export function renderFinderPage(container) {
     const empty = document.createElement('div');
     empty.className = 'empty-state';
     empty.textContent = state.searchQuery
-      ? 'ZZZZ'
+      ? 'Ничего не найдено'
       : 'Введите запрос для поиска компаний';
     page.append(empty);
   }

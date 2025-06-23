@@ -36,7 +36,6 @@ export function renderContent() {
   out.innerHTML = '';
   switch (state.currentPage) {
     case 'finder':
-      console.log("finder");
       renderFinderPage(out);
       break;
     case 'company':
