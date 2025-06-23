@@ -1,10 +1,8 @@
-// company.js
 import { state, goToPage, renderContent } from './state.js';
 import { analyzeCompany, getCompanyById } from '../back/EndPoints.js';
 import mockCompany from '../back/Mocks.js';
 
 export function renderCompanyPage(container) {
-  // подтягиваем моковые данные, если нужно
   if (state.isUsingMockData && !state.companyDetails) {
     state.companyDetails = mockCompany;
   }
@@ -13,7 +11,6 @@ export function renderCompanyPage(container) {
   const page = document.createElement('div');
   page.className = 'page_container';
 
-  // лоадер
   if (state.isLoading) {
     const loading = document.createElement('div');
     loading.className = 'loading';
@@ -23,7 +20,6 @@ export function renderCompanyPage(container) {
     return;
   }
 
-  // если нет данных
   if (!company) {
     const empty = document.createElement('div');
     empty.className = 'empty-state';
@@ -33,11 +29,9 @@ export function renderCompanyPage(container) {
     return;
   }
 
-  // --- Карточки с основными данными ---
   const cardsLine = document.createElement('div');
   cardsLine.className = 'cards-line';
 
-  // имя и описание
   const cardName = document.createElement('div');
   cardName.className = 'card-name';
   const nameCard = document.createElement('div');
@@ -71,7 +65,6 @@ export function renderCompanyPage(container) {
   cardName.append(nameCard);
   cardsLine.append(cardName);
 
-  // рейтинг и количество отзывов
   const cardRating = document.createElement('div');
   cardRating.className = 'card-rating';
 
@@ -100,7 +93,6 @@ export function renderCompanyPage(container) {
 
 
 
-  // --- Анализ отзывов ---
   const cardsEnd = document.createElement('div');
   cardsEnd.className = 'cards-end';
   const analyzeCard = document.createElement('div');

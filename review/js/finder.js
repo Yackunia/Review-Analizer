@@ -1,4 +1,3 @@
-// finder.js
 import { searchCompaniesByName, getCompanyById } from '../back/EndPoints.js';
 import { renderContent, state } from './state.js';
 import mockCompany from '../back/Mocks.js';
@@ -44,7 +43,7 @@ export function renderFinderPage(container) {
       const card = document.createElement('div');
       card.className = 'container-card';
       card.style.maxWidth = '1200px';
-
+      card.style.marginTop = '25px';
       const title = document.createElement('h3');
       title.textContent = company.name;
       const desc = document.createElement('p');
